@@ -1,4 +1,4 @@
-package revanate_p1;
+package com.revanate;
 
 public class App {
 
