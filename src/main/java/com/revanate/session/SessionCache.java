@@ -1,7 +1,7 @@
 package com.revanate.session;
 
-public class sessionsUtility {
+public class SessionCache {
 	
-	
+		
 
 }

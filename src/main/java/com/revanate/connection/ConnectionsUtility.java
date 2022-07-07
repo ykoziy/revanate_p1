@@ -1,4 +1,4 @@
-package com.revanate.Connection;
+package com.revanate.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
