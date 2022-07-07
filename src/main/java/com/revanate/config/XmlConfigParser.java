@@ -1,6 +1,8 @@
 package com.revanate.config;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -10,26 +12,27 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-//// WORK IN PROGRESS, testing xml reading //////
 public class XmlConfigParser {
 	private final String FILENAME;
+	private Map<String, String> properties;
 
 	public XmlConfigParser(String fileName) {
 		FILENAME = fileName;
+		properties = new HashMap<>();
 	}
-	
+
 	private InputStream getResourceFileStream() {
 		InputStream inStream = this.getClass().getClassLoader().getResourceAsStream(FILENAME);
-        if (inStream == null) {
-            throw new IllegalArgumentException("Config file not found! " + inStream);
-        } else {
-            return inStream;
-        }
+		if (inStream == null) {
+			throw new IllegalArgumentException("Config file not found! " + inStream);
+		} else {
+			return inStream;
+		}
 	}
-	
-	public void readXmlFile() {
+
+	public Map<String, String> readXmlFile() {
+		int objectMapCount = 0;
 		XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-		
 		InputStream xmlStream = getResourceFileStream();
 		try {
 			XMLEventReader reader = xmlInputFactory.createXMLEventReader(xmlStream);
@@ -40,43 +43,52 @@ public class XmlConfigParser {
 					switch (startElement.getName().getLocalPart()) {
 					case "property":
 						Attribute name = startElement.getAttributeByName(new QName("name"));
-						if (name != null)
-						{
+						if (name != null) {
 							String attribute = name.getValue();
 							if (attribute.equals("revanate.connection.url")) {
 								xmlEvent = reader.nextEvent();
-								System.out.println("DB Url: " + xmlEvent.asCharacters().getData());
+								readConnectionCfg("dburl", xmlEvent);
 							} else if (attribute.equals("revanate.connection.username")) {
 								xmlEvent = reader.nextEvent();
-								System.out.println("DB username: " + xmlEvent.asCharacters().getData());								
+								readConnectionCfg("username", xmlEvent);
 							} else if (attribute.equals("revanate.connection.password")) {
 								xmlEvent = reader.nextEvent();
-								System.out.println("DB password: " + xmlEvent.asCharacters().getData());
+								readConnectionCfg("password", xmlEvent);
 							}
 						}
 						break;
 					case "mapping":
 						Attribute clazz = startElement.getAttributeByName(new QName("class"));
-						if (clazz != null)
-						{
+						if (clazz != null) {
 							String attribute = clazz.getValue();
-							System.out.println(attribute);
-//							try {
-//								// get class from canonical name
-//								Class entityClass = Class.forName(attribute);
-//								System.out.println(entityClass);
-//							} catch (ClassNotFoundException e) {
-//								e.printStackTrace();
-//							}
+							properties.put("mapping" + objectMapCount, attribute);
+							objectMapCount++;
 						}
 						break;
 					default:
 						break;
 					}
-				} 
+				}
 			}
 		} catch (XMLStreamException e) {
 			e.printStackTrace();
+		}
+		return properties;
+	}
+
+	private void readConnectionCfg(String attribute, XMLEvent xevent) {
+		String url = "";
+		String uname = "";
+		String pwd = "";
+		if (attribute.equals("dburl")) {
+			url = xevent.asCharacters().getData();
+			properties.put("db_url", url);
+		} else if (attribute.equals("username")) {
+			uname = xevent.asCharacters().getData();
+			properties.put("db_username", uname);
+		} else if (attribute.equals("password")) {
+			pwd = xevent.asCharacters().getData();
+			properties.put("db_password", pwd);
 		}
 	}
 }
