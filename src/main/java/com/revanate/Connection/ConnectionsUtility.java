@@ -10,19 +10,22 @@ public class ConnectionsUtility {
 	private static BasicDataSource ds = new BasicDataSource();
 
 	static {
-		ds.setUrl("jdbc:h2:mem:test");
-		ds.setUsername("user");
-		ds.setPassword("password");
+
+		ds.setDriverClassName("org.postgresql.Driver");
 		ds.setMinIdle(5);
 		ds.setMaxIdle(10);
 		ds.setMaxOpenPreparedStatements(100);
 	}
 
-	public static Connection getConnection() throws SQLException {
+	public static Connection getConnection(String url, String Username, String Password) throws SQLException {
+		ds.setUrl(url);
+		ds.setUsername(Username);
+		ds.setPassword(Password);
+
 		return ds.getConnection();
+
 	}
 
 	private ConnectionsUtility() {
 	}
-
 }
