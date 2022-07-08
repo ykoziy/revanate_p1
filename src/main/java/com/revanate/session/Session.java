@@ -13,6 +13,8 @@ public class Session {
 	
 	private SessionCache cache;
 	
+	private Transaction currenTransaction;
+	
 	public Session(Connection conn) {
 		this.conn = conn;
 	}
@@ -54,10 +56,10 @@ public class Session {
 	}
 	
 	public Transaction beginTransaction() {
-		// check if there is already a transaction for this session, continue that transaction
-		// if no transaction for the session create one
-		// return associated transaction object
-		return null;
+		if (currenTransaction == null) {
+			currenTransaction = new Transaction(conn);
+		}
+		return currenTransaction;
 	}
 	
 	// clean up and release JDBC connection
