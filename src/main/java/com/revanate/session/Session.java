@@ -54,14 +54,9 @@ public class Session {
 	}
 	
 	public Transaction beginTransaction() {
-		/* 
-		 * 1) Convert object to EntityModel
-		 * 2) Get fprimaryKey ID
-		 * 3) Create query using data from previous data
-		 * 4) Run that query on the DB, using session connection
-		 * 5) If everything went OK, just store the Object inside the cache
-		 * 6) Return primary key (ID), it is set to Object because it can be any type
-		 */	
+		// check if there is already a transaction for this session, continue that transaction
+		// if no transaction for the session create one
+		// return associated transaction object
 		return null;
 	}
 	
