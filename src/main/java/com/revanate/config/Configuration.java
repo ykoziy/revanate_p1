@@ -12,7 +12,6 @@ public class Configuration {
 	private String dbUsername;
 	private String dbPassword;
 
-	// store list of object mappings, not functional right now
 	private List<EntityModel<Class<?>>> entityModelList;
 
 	public Configuration addEntittyModel(Class<?> annotetedClass) {
@@ -51,7 +50,15 @@ public class Configuration {
 	}
 	
 	private void addEntityModel(String className) {
-		System.out.println(className);
+		if (entityModelList == null) {
+			entityModelList = new LinkedList<>();
+		}
+		try {
+			Class<?> clazz = Class.forName(className);
+			entityModelList.add(EntityModel.of(clazz));
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public SessionManager buildSessionManager() {
