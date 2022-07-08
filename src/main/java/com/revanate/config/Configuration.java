@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.revanate.entity.EntityModel;
+import com.revanate.session.SessionManager;
 
 public class Configuration {
 	private String dbUrl;
@@ -52,4 +53,43 @@ public class Configuration {
 	private void addEntityModel(String className) {
 		System.out.println(className);
 	}
+	
+	public SessionManager buildSessionManager() {
+		SessionManager sm = new SessionManager(this);
+		return sm;
+	}
+
+	public String getDbUrl() {
+		return dbUrl;
+	}
+
+	public void setDbUrl(String dbUrl) {
+		this.dbUrl = dbUrl;
+	}
+
+	public String getDbUsername() {
+		return dbUsername;
+	}
+
+	public void setDbUsername(String dbUsername) {
+		this.dbUsername = dbUsername;
+	}
+
+	public String getDbPassword() {
+		return dbPassword;
+	}
+
+	public void setDbPassword(String dbPassword) {
+		this.dbPassword = dbPassword;
+	}
+
+	public List<EntityModel<Class<?>>> getEntityModelList() {
+		return entityModelList;
+	}
+
+	public void setEntityModelList(List<EntityModel<Class<?>>> entityModelList) {
+		this.entityModelList = entityModelList;
+	}
+	
+	
 }
