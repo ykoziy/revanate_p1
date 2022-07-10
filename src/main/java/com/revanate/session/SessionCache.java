@@ -10,21 +10,45 @@ public class SessionCache {
 	// That way, when you try to query it a second time, you check the data structure first (your hashmap, for example) and 
 	// if the object exists you can quickly retrieve it without spending time connecting to the DB and executing the same query.
 
+	private HashMap<Class<?>, HashSet<Object>> cache;
 	
-	// gets all object for a class
-	public HashMap<Class<?>, HashSet<Object>> getCache()
-	{
-		return null;
+	public SessionCache() {
+		cache = new HashMap<>();
 	}
 	
-	// some method to add to cache
-	public void add(Class<?> clazz, Object obj) {
-		
+	public HashMap<Class<?>, HashSet<Object>> get() {
+		return cache;
 	}
 	
-	// some method to clear cache
+	public HashSet<Object> getObjects(final Class<?> clazz) {
+		return cache.get(clazz);
+	}
+	
+	public void add(final Class<?> clazz, final Object obj) {
+		if (cache.containsKey(clazz)) {
+			cache.get(clazz).add(obj);
+		} else {
+			HashSet<Object> objSet = new HashSet<>();
+			objSet.add(obj);
+			cache.put(clazz, objSet);
+		}
+	}
+	
+	public Object get(final Class<?> clazz, final Object obj) {
+		if (cache.containsKey(clazz)) {
+			HashSet<Object> objSet = cache.get(clazz);
+			for (Object o : objSet) {
+				if (o.equals(obj)) {
+					return o;
+				}
+			}
+			return null;
+		} else {
+			return null;
+		}
+	}
+	
 	public void clear() {
-		
+		cache.clear();
 	}
-	
 }
