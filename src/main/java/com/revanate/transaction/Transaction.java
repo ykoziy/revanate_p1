@@ -71,7 +71,6 @@ Savepoint sp = savePoints.get(name);
 				conn.releaseSavepoint(sp);
 				savePoints.remove(name);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	
 	}
