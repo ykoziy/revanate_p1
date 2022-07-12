@@ -58,6 +58,7 @@ public class Session {
 	public Transaction beginTransaction() {
 		if (currenTransaction == null) {
 			currenTransaction = new Transaction(conn);
+			currenTransaction.setAutoCommit(false);
 		}
 		return currenTransaction;
 	}
@@ -67,7 +68,6 @@ public class Session {
 		try {
 			conn.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
