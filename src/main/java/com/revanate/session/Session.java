@@ -62,11 +62,12 @@ public class Session {
 		}
 		return currenTransaction;
 	}
-	
-	// clean up and release JDBC connection
+
 	public void close() {	
 		try {
 			conn.close();
+			cache.clear();
+			currenTransaction = null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
