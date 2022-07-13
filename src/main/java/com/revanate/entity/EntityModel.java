@@ -12,9 +12,8 @@ import com.revanate.annotations.Id;
 import com.revanate.exception.EntityException;
 import com.revanate.exception.PrimaryKeyMissing;
 
-public class EntityModel
+public class EntityModel<T>
 {
-
 	private Class<?> annotetedClass;
 	private Field[] fields;
 	@SuppressWarnings("unused")
@@ -26,6 +25,14 @@ public class EntityModel
 		this.annotetedClass = annotetedClass;
 		isAnnotated();
 
+	}
+	
+	// method to check and transpose a normal java class to a MetalModel
+	public static EntityModel<Class<?>> of(Class<?> clazz) {
+		if (clazz.getAnnotation(Entity.class) == null) {
+			throw new EntityException("Cannot create class");
+		}
+		return new EntityModel<>(clazz);
 	}
 
 	private void isAnnotated()
