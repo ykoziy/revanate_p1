@@ -12,7 +12,7 @@ public class Query {
 		this.conn = conn;
 	}
 	
-	private static void setParameter(PreparedStatement pstmt, Field field, Object object, int index) {
+	private void setParameter(PreparedStatement pstmt, Field field, Object object, int index) {
         String type = field.getType().toString();
 
         try {
@@ -45,85 +45,86 @@ public class Query {
     }
 
      // delete
-    public Object delete(Object object) {
+    public void delete(Object object) {
     	Class<?> clazz = object.getClass();
     	Field[] fields = clazz.getDeclaredFields();
         StringBuilder sb = new StringBuilder();
-    	sb.append("DELETE ");
+    	sb.append("DELETE FROM ");
         sb.append(clazz.getSimpleName().toLowerCase());
-        sb.append(" (");
+        sb.append(" WHERE ");
+        //sb.append(field.getName());
+        sb.append(" == ");
+        //sb.append(field.getId());
+        sb.append(";");
 
-        for (Field field : fields)
-        {
-            sb.append(field.getName() + ", ");
-            field.setAccessible(true);
-        }
-
-        // get rid of last comma and space
-        sb.replace(sb.length() - 2, sb.length(), "");
-        sb.append(") VALUES(");
-        for (Field field : fields)
-        {
-            sb.append("?, ");
-        }
-        sb.replace(sb.length() - 2, sb.length(), "");
-        sb.append(");");
-
-        for (Field field : fields)
-        {
-            System.out.println(field.getType());
-        }
-
-        System.out.println(sb.toString());
-
-        // set prepared statement fields, using correct types
         PreparedStatement pstmt = conn.prepareStatement(sb.toString());        
         
-        /// executeUpdate using built prepared statement
-        for (int idx = 1; idx <= fields.length; idx++) {
-            setParameter(pstmt, fields[idx-1], object, idx);
-        } 
+        setParameter(pstmt, fields[0], object, 1);
         
-        /// Figure out what to do with the primary key in query, and how to return it?
-
-        return null;
+        try {
+            int rows = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }    	
 
-    // save/insert
+    // this save method, accepts an object. Have to store that object as a row inside the DB
     public Object save(Object object) {
-    	// create sql query
+        // get the runtime class of the object
         Class<?> clazz = object.getClass();
+
+        // get the fields included in the class
         Field[] fields = clazz.getDeclaredFields();
+
+        // create new StringBuilder instance called sb
         StringBuilder sb = new StringBuilder();
+
+        // append parts of query to sb
         sb.append("INSERT INTO ");
+
+        // get the class name, ORM uses tables based on Model objects
         sb.append(clazz.getSimpleName().toLowerCase());
         sb.append(" (");
 
+        // this loop, just inserting column names
         for (Field field : fields)
         {
             sb.append(field.getName() + ", ");
+            // field can be private so make it accessible
             field.setAccessible(true);
         }
 
         // get rid of last comma and space
         sb.replace(sb.length() - 2, sb.length(), "");
         sb.append(") VALUES(");
+
+        // this loop just appending placeholders question
+        // marks for the parameters of the PreparedStatement
         for (Field field : fields)
         {
             sb.append("?, ");
         }
+
+        // get rid of last comma and space
         sb.replace(sb.length() - 2, sb.length(), "");
+        // end the query
         sb.append(");");
 
-        // set prepared statement fields, using correct types
+        // creating PreparedStatement
         PreparedStatement pstmt = conn.prepareStatement(sb.toString());
-        
-        for (int idx = 1; idx <= fields.length; idx++) {
-            setParameter(pstmt, fields[idx-1], object, idx);
-        } 
-        /// executeUpdate using built prepared statement
-        /// Figure out what to do with the primary key in query, and how to return it?
 
+        // set prepared statement fields, using correct data types
+        for (int idx = 1; idx <= fields.length; idx++) {
+            setParameter(null, fields[idx-1], object, idx);
+        }
+
+        /// executeUpdate using built prepared statement
+        try {
+            int rows = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        /// Figure out what to do with the primary key in query, and how to return it?
         return null;
     }
     
