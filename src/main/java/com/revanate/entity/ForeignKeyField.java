@@ -6,6 +6,12 @@ import com.revanate.annotations.ForeignKey;
 
 public class ForeignKeyField
 {
+	@Override
+	public String toString()
+	{
+		return "ForeignKeyField [field=" + field + "]";
+	}
+
 	private Field field;
 
 	public ForeignKeyField(Field field) {

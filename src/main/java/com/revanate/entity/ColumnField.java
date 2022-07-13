@@ -20,6 +20,12 @@ public class ColumnField {
 		this.field = field;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "ColumnField [field=" + field + "]";
+	}
+
 	public String getName() {
 		return field.getName();
 	}

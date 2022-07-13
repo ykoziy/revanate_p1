@@ -21,6 +21,12 @@ public class PrimaryKeyField {
 		return field.getName();
 	}
 
+	@Override
+	public String toString()
+	{
+		return "PrimaryKeyField [field=" + field + "]";
+	}
+
 	// return the type of the field that annotated
 	public Class<?> getType() {
 		return field.getType();
