@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.revanate.query.Query;
+import com.revanate.query.Query2;
 import com.revanate.entity.EntityModel;
 import com.revanate.transaction.Transaction;
 
@@ -40,7 +42,15 @@ public class Session {
 		return null;
 	}
 	
-	public Object save(Object object) {		
+	public Object save(Object object) {
+		Query2 query;
+		//Class clazz = object.getClass();
+		EntityModel<?> entity = EntityModel.of(getClass());
+		int index = entityModelList.indexOf(entity);
+		if (index != -1) {
+			query = new Query2(conn, entityModelList.get(index));
+			query.save(object);
+		}
 		/* 
 		 * 1) Convert object to EntityModel
 		 * 2) Get field names and field data
