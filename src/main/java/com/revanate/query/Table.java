@@ -32,7 +32,6 @@ public class Table {
         }
         sb.append(");");
         
-        System.out.println(sb.toString());
         Statement stmt;
         try {
             stmt = conn.createStatement();
