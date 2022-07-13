@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.revanate.entity.EntityModel;
 import com.revanate.transaction.Transaction;
 
 // each session is a connection to the database
@@ -15,8 +16,15 @@ public class Session {
 	
 	private Transaction currenTransaction;
 	
-	public Session(Connection conn) {
+	private List<EntityModel<Class<?>>> entityModelList;
+	
+	public Session(Connection conn, List<EntityModel<Class<?>>> entityModelList) {
+		this.entityModelList = entityModelList;
 		this.conn = conn;
+	}
+	
+	public List<EntityModel<Class<?>>> getEntityList() {
+		return entityModelList;
 	}
 	public Object get(Class<?> entityClass, int id) {
 		// ID can be any type, figure out  best way to do it

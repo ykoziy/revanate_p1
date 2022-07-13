@@ -14,11 +14,11 @@ public class SessionManager {
 	public SessionManager(Configuration cfg) {
 		this.cfg = cfg;
 	}
-	
+		
 	public Session openSession() {
 		//do setup and return new session, with connection to the DB
 		try {
-			return new Session(ConnectionsUtility.getConnection(cfg.getDbUrl(), cfg.getDbUsername(), cfg.getDbPassword()));
+			return new Session(ConnectionsUtility.getConnection(cfg.getDbUrl(), cfg.getDbUsername(), cfg.getDbPassword()), cfg.getEntityModelList());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
