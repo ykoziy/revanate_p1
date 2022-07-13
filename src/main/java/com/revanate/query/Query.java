@@ -155,12 +155,28 @@ public class Query {
         }
     }
     
-//    private void resultSetToObject(ResultSet rs, Object object) {
-//    	
-//    	try (ResultSet rs = pstmt.executeUpdate()) {
-//    		
-//    	} catch (SQLException e) {
-//    
-//    	}
-//    }
+    private void resultSetToObject(ResultSet rs, Object object) {
+        Class<?> clazz = object.getClass();
+        for (Field field : clazz.getDeclaredFields()) {
+            // field might be private, set accessible to true
+            field.setAccessible(true);
+            Object value;
+            try  {
+                value = rs.getObject(field.getName());
+                Class<?> type = field.getType();
+                // figure out what type, need to get data type wrapper class
+                // for example int, needs to be Integer.class
+                /// String, needs to be String.class
+
+                // need to cast that value to specific class
+                // example casting value to String
+                value = String.class.cast(value);
+                field.set(object, value); // use this to set field value
+
+                
+            } catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
