@@ -36,7 +36,7 @@ public class Table {
 		}
 	}
 
-	private static String mapJavaFieldToSQL(Field field, Class<?> clazz) {
+	private String mapJavaFieldToSQL(Field field, Class<?> clazz) {
 		String type = field.getType().getSimpleName().toLowerCase();
 		String fieldName = field.getName();
 		if (type.equals("int")) {
