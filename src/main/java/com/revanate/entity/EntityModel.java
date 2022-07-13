@@ -144,5 +144,13 @@ public class EntityModel<T>
 
 		return temp;
 	}
+	
+	public String getSimpleClassName() {
+		return annotetedClass.getSimpleName();
+	}
+
+	public String getClassName() {
+		return annotetedClass.getName();
+	}
 
 }
