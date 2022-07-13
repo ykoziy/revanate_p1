@@ -1,6 +1,9 @@
+package com.revanate.query;
+
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -129,41 +132,51 @@ public class Query {
     }
     
     // get
-//    public static Object get(Object object) {
-//        Class<?> clazz = object.getClass();
-//        Field[] fields = clazz.getDeclaredFields();
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(" ");
-//        sb.append(clazz.getSimpleName().toLowerCase());
-//        sb.append(" (");
-//
-//        for (Field field : fields)
-//        {
-//            sb.append(field.getName() + ", ");
-//            field.setAccessible(true);
-//        }
-//
-//        // get rid of last comma and space
-//        sb.replace(sb.length() - 2, sb.length(), "");
-//        sb.append(") VALUES(");
-//        for (Field field : fields)
-//        {
-//            sb.append("?, ");
-//        }
-//        sb.replace(sb.length() - 2, sb.length(), "");
-//        sb.append(");");
-//
-//        for (Field field : fields)
-//        {
-//            System.out.println(field.getType());
-//        }
-//
-//        System.out.println(sb.toString());
-//
-//        // set prepared statement fields, using correct types
-//        /// executeUpdate using built prepared statement
-//        /// Figure out what to do with the primary key in query, and how to return it?
-//
-//        return null;
-//    }
+    public Object get(Object object) {
+    	Class<?> clazz = object.getClass();
+    	Field[] fields = clazz.getDeclaredFields();
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT ");
+        sb.append(clazz.getSimpleName().toLowerCase());
+        sb.append(" WHERE ");
+        //sb.append(field.getName());
+        sb.append(" == ");
+        //sb.append(field.getId());
+        sb.append(";");
+
+        PreparedStatement pstmt = conn.prepareStatement(sb.toString());        
+        
+        setParameter(pstmt, fields[0], object, 1);
+        
+        try {
+            int rows = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private void resultSetToObject(ResultSet rs, Object object) {
+        Class<?> clazz = object.getClass();
+        for (Field field : clazz.getDeclaredFields()) {
+            // field might be private, set accessible to true
+            field.setAccessible(true);
+            Object value;
+            try  {
+                value = rs.getObject(field.getName());
+                Class<?> type = field.getType();
+                // figure out what type, need to get data type wrapper class
+                // for example int, needs to be Integer.class
+                /// String, needs to be String.class
+
+                // need to cast that value to specific class
+                // example casting value to String
+                value = String.class.cast(value);
+                field.set(object, value); // use this to set field value
+
+                
+            } catch (SQLException | IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
