@@ -167,10 +167,30 @@ public class Query {
                 // figure out what type, need to get data type wrapper class
                 // for example int, needs to be Integer.class
                 /// String, needs to be String.class
+                if (type.equals("int")) {
+                	type = Integer.class;
+                } else if (type.equals("double")) {
+                    type = Double.class;
+                } else if (type.equals("String")) {
+                	type = String.class;
+                }  else if (type.equals("byte")) {
+                	type = Byte.class;
+                } else if (type.equals("short")) {
+                	type = Short.class;
+                } else if (type.equals("float")) {
+                	type = Float.class;
+                } else if (type.equals("char")) {
+                	type = Character.class;
+                } else if (type.equals("long")) {
+                	type = Long.class;
+                }  else if (type.equals("boolean")) {
+                	type = Boolean.class;
+                }
 
                 // need to cast that value to specific class
                 // example casting value to String
-                value = String.class.cast(value);
+                //value = String.class.cast(value);
+                value = type.cast(value);
                 field.set(object, value); // use this to set field value
 
                 
