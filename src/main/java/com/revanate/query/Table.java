@@ -30,7 +30,7 @@ public class Table {
 		Statement stmt;
 		try {
 			stmt = conn.createStatement();
-			stmt.executeQuery(sb.toString());
+			stmt.execute(sb.toString());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
