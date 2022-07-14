@@ -93,40 +93,47 @@ public class Query {
         PreparedStatement pstmt = conn.prepareStatement(sb.toString());        
         setParameter(pstmt, entity.GetPrimaryKey().getType(), object, 1, entity.GetPrimaryKey().getName());
         int rows = pstmt.executeUpdate();
-    }        	
+    }        
+    
     // this save method, accepts an object. Have to store that object as a row inside the DB
     public Object save(Object object) {
         // create new StringBuilder instance called sb
         StringBuilder sb = new StringBuilder();
-        
+
         // append parts of query to sb
         sb.append("INSERT INTO ");
-        
+
         // get the class name, ORM uses tables based on Model objects
         sb.append(entity.getSimpleClassName().toLowerCase());
         sb.append(" (");
 
-        for (ColumnField column : entity.GetColumns())
+        PrimaryKeyField pk = entity.GetPrimaryKey();
+        int columnCount = entity.GetColumns().size();
+
+        for (int idx = 0; idx < columnCount; idx++)
         {
-        	if (!column.getColumnName().equals(entity.GetPrimaryKey().getColumnName())) {
-        		if (!entity.GetPrimaryKey().getGenerationType().equals("auto")) {
-        			sb.append(column.getColumnName() + ", ");
-        		}
-        	}
-        }        
+            ColumnField column = entity.GetColumns().get(idx);
+            String columnName = column.getColumnName();
+            if (columnName.equals(pk.getColumnName())) {
+                if (pk.getGenerationType().equals("none")) {
+                    sb.append(column.getColumnName() + ", ");
+                }
+            } else {
+                sb.append(column.getColumnName() + ", ");
+            }
+        }
 
         // get rid of last comma and space
         sb.replace(sb.length() - 2, sb.length(), "");
         sb.append(") VALUES(");
 
-        for (ColumnField column : entity.GetColumns())
+        if (pk != null && pk.getGenerationType().equals("auto")) {
+            columnCount -= 1;
+        }
+        for (int idx = 0; idx < columnCount; idx++)
         {
-        	if (!column.getColumnName().equals(entity.GetPrimaryKey().getColumnName())) {
-        		if (!entity.GetPrimaryKey().getGenerationType().equals("auto")) {
-                    sb.append("?, ");
-        		}
-        	}
-        }   
+            sb.append("?, ");
+        }
 
         // get rid of last comma and space
         sb.replace(sb.length() - 2, sb.length(), "");
@@ -137,13 +144,14 @@ public class Query {
         try {
             PreparedStatement pstmt = conn.prepareStatement(sb.toString());
             //.GetColumns() - returns list of ColumnFields
-            for (int idx = 0; idx < entity.GetColumns().size(); idx++) {
+            for (int idx = 1; idx <= columnCount; idx++) {
                 ColumnField field = entity.GetColumns().get(idx);
                 // using field.getType()
                 // field.getName() <- this gets field name in java
                 // field.getColumnName() <- gets column name as represented in DB
-                setParameter(pstmt, field.getType(), object, idx + 1, field.getName());
+                setParameter(pstmt, field.getType(), object, idx, field.getName());
             }
+            System.out.println(pstmt.toString());
             int rows = pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
