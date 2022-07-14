@@ -108,7 +108,11 @@ public class Query {
 
         for (ColumnField column : entity.GetColumns())
         {
-            sb.append(column.getColumnName() + ", ");
+        	if (!column.getColumnName().equals(entity.GetPrimaryKey().getColumnName())) {
+        		if (!entity.GetPrimaryKey().getGenerationType().equals("auto")) {
+        			sb.append(column.getColumnName() + ", ");
+        		}
+        	}
         }        
 
         // get rid of last comma and space
@@ -117,7 +121,11 @@ public class Query {
 
         for (ColumnField column : entity.GetColumns())
         {
-            sb.append("?, ");
+        	if (!column.getColumnName().equals(entity.GetPrimaryKey().getColumnName())) {
+        		if (!entity.GetPrimaryKey().getGenerationType().equals("auto")) {
+                    sb.append("?, ");
+        		}
+        	}
         }   
 
         // get rid of last comma and space
