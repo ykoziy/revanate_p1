@@ -18,15 +18,24 @@ public class Table {
     
     public void createTable(EntityModel<?> entity) {
         StringBuilder sb = new StringBuilder();
+        PrimaryKeyField pk = entity.GetPrimaryKey();
         sb.append("CREATE TABLE IF NOT EXISTS " + entity.getSimpleClassName().toLowerCase());
         sb.append(" (");
         for (ColumnField column : entity.GetColumns()) {
-            sb.append(mapJavaFieldToSQL(column.getColumnName(), column.getType().toString()));
+        	if (pk.getColumnName().equals(column.getColumnName())) {
+        		if (pk.getGenerationType().equals("auto")) {
+                    sb.append(column.getColumnName() + " SERIAL NOT NULL");
+        		} else {
+        			sb.append(mapJavaFieldToSQL(column.getColumnName(), column.getType().toString()));
+        		}
+
+        	} else {
+                sb.append(mapJavaFieldToSQL(column.getColumnName(), column.getType().toString()));
+        	}
             sb.append(", ");
         }
         
         sb.replace(sb.length() - 2, sb.length(), "");
-        PrimaryKeyField pk = entity.GetPrimaryKey();
         if (pk != null) {
             sb.append(", PRIMARY KEY(" + pk.getColumnName() + ")");
         }
