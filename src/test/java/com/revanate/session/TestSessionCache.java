@@ -82,71 +82,34 @@ public class TestSessionCache {
 
 	// testing add method //
 	@Test
-	public void shouldBeAbleToAddObjectClassDoesNotExist() {
-		sessionCache.add(User.class, testUser1);
+	public void shouldBeAbleToAdd() {
+		sessionCache.add(testUser1.getUsername(), testUser1);
 		Assert.assertEquals(1, sessionCache.get().size());
 	}
 
-	@Test
-	public void shouldBeAbleToAddObjectClassExists() {
-		sessionCache.add(User.class, testUser1);
-		sessionCache.add(Employee.class, testEmp1);
-
-		sessionCache.add(User.class, testUser3);
-		Assert.assertEquals(2, sessionCache.getObjects(User.class).size());
-	}
-	// end testing add method //
-
 	// testing get method //
-	public void shouldGetSpecificObjectFromCache() {
-		sessionCache.add(User.class, testUser1);
-		sessionCache.add(User.class, testUser3);
-		sessionCache.add(Employee.class, testEmp1);
-		sessionCache.add(Employee.class, testEmp2);
-		sessionCache.add(Employee.class, testEmp3);
+	public void shouldBeAbleToGet() {
+		sessionCache.add(testEmp2.getName(), testEmp2);
 
-		User getUser = (User) sessionCache.get(User.class, testUser3);
-		Assert.assertEquals("Coding_Beast", getUser.getUsername());
+		User getUser = (User) sessionCache.get(testEmp2.getName());
 	}
 
-	public void shouldNotGetObjectIfClassNotInCache() {
-		sessionCache.add(User.class, testUser1);
-		sessionCache.add(User.class, testUser3);
+	public void shouldNotGetObjectIfDoesNotExist() {
+		sessionCache.add(testUser1.getUsername(), testUser1);
+		sessionCache.add(testUser3.getUsername(), testUser3);
 
-		Employee getEmp = (Employee) sessionCache.get(Employee.class, testEmp1);
+		Employee getEmp = (Employee) sessionCache.get(testUser2.getUsername());
 		Assert.assertNull(getEmp);
 	}
 
-	public void shouldNotGetObjectIfObjectNotInCache() {
-		sessionCache.add(User.class, testUser1);
-		sessionCache.add(User.class, testUser3);
-
-		User user = new User("bob99");
-
-		User getUser = (User) sessionCache.get(User.class, user);
-		Assert.assertNull(getUser);
-	}
-	// end testing get method //
 
 	// testing clear method //
 	@Test
 	public void shouldBeAbleToClearCache() {
-		sessionCache.add(User.class, testUser1);
-		sessionCache.add(Employee.class, testEmp1);
-		sessionCache.add(Employee.class, testEmp2);
-		sessionCache.add(Employee.class, testEmp3);
+		sessionCache.add(testUser1.getUsername(), testUser1);
+		sessionCache.add(testUser3.getUsername(), testUser3);
+		
 		sessionCache.clear();
 		Assert.assertEquals(0, sessionCache.get().size());
 	}
-
-	// testing getObjects method //
-	@Test
-	public void shouldBeAbleToGetAllObjectsOfAClass() {
-		sessionCache.add(User.class, testUser1);
-		sessionCache.add(Employee.class, testEmp1);
-		sessionCache.add(Employee.class, testEmp2);
-		sessionCache.add(Employee.class, testEmp3);
-		Assert.assertEquals(3, sessionCache.getObjects(Employee.class).size());
-	}
-
 }
