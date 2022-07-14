@@ -19,6 +19,19 @@ List of features goes here....
 Any Information one would need to utilize your repo
 
 ## Usage
+Using git:
+* Start in a directory where to want to clone this repository
+* Execute `git clone https://github.com/ykoziy/revanate_p1.git`
+* Switch into newly created directory `revanate_p1`
+* In console do `mvn install`
+* Add this as dependency in another maven project (pom.xml)
+```
+<groupId>com.revanate</groupId>
+
+<artifactId>revanate_p1</artifactId>
+
+<version>0.0.1-SNAPSHOT</version>
+```
 
 ### Annotations
 In order for the Revanate ORM to know which Java classes need to be mapped with the database tables, you must properly annotate your Model layer classes.
@@ -61,7 +74,7 @@ Using SessionManager you can how open a session. Opening a session establishes a
 
 ## User API
 
-### Session 
+### Session
 `List<EntityModel<Class<?>>> getEntityList()` - gets EntityModel list.
 
 `void delete(Object object)` - delete object from the table row.
