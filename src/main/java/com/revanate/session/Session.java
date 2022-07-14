@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.revanate.query.Query;
-import com.revanate.query.Query2;
 import com.revanate.query.Table;
 import com.revanate.entity.EntityModel;
 import com.revanate.transaction.Transaction;
