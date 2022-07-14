@@ -6,7 +6,7 @@
 	<property name="revanate.connection.password">postgres</property>
 
 	<!-- List of mapping files -->
-	<mapping class="com.revanate.models.Crime" />
-	<mapping class="com.revanate.models.SuperVillain" />
-	<mapping class="com.revanate.models.SuperPrison" />
+<!-- 	<mapping class="com.revanate.models.Crime" /> -->
+<!-- 	<mapping class="com.revanate.models.SuperVillain" /> -->
+<!-- 	<mapping class="com.revanate.models.SuperPrison" /> -->
 </revanate-configuration>
