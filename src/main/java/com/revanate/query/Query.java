@@ -16,15 +16,19 @@ public class Query {
 	
 	public Query(Connection conn) {
 		this.conn = conn;
-		EntityModel<?> entity;
+		this.entity = entity;
 	}
 	
-	private void setParameter(PreparedStatement pstmt, Field field, Object object, int index) {
-		EntityModel<?> entity
-		this.entity = entity;
-        String type = field.getType().toString();
+	private void setParameter(PreparedStatement pstmt, Class<?> entityClass, Object object, int index, String fieldName) {
+        String type = entityClass.getTypeName();
+        System.out.println(type);
+        Field field;
 
         try {
+        	
+        	field = object.getClass().getDeclaredField(fieldName);
+        	field.setAccessible(true);
+        	
             Object value = field.get(object);
             if (type.equals("int")) {
                 pstmt.setInt(index, (int) value);
@@ -38,43 +42,32 @@ public class Query {
                 pstmt.setShort(index, (short) value);
             } else if (type.equals("float")) {
                 pstmt.setFloat(index, (float) value);
-            //} else if (type.equals("char")) {
-                //pstmt.setString(index, (String) value);
             } else if (type.equals("long")) {
                 pstmt.setLong(index, (long) value);
             }  else if (type.equals("boolean")) {
                 pstmt.setBoolean(index, (boolean) value);
             }
             
-            } catch (IllegalAccessException e) {
-            	throw new RuntimeException(e);
-            } catch (SQLException e) {
-            	throw new RuntimeException(e);
-        }
+            } catch (NoSuchFieldException | SecurityException | SQLException | IllegalArgumentException | IllegalAccessException e) {
+            	e.printStackTrace();
+            }
     }
 
      // delete
     public void delete(Object object) throws SQLException {
-    	Class<?> clazz = object.getClass();
-    	Field[] fields = clazz.getDeclaredFields();
         StringBuilder sb = new StringBuilder();
     	sb.append("DELETE FROM ");
-        sb.append(clazz.getSimpleName().toLowerCase());
+        sb.append(entity.getSimpleClassName().toLowerCase());
         sb.append(" WHERE ");
-        //sb.append(field.getName());
-        sb.append(" == ");
-        //sb.append(field.getId());
+        sb.append(entity.GetPrimaryKey().getColumnName());
+        sb.append(" = ?");
         sb.append(";");
 
         PreparedStatement pstmt = conn.prepareStatement(sb.toString());        
-        
-        setParameter(pstmt, fields[0], object, 1);
-        
-        try {
-            int rows = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        System.out.println(sb.toString());
+        System.out.println(entity.GetPrimaryKey().getName());
+        setParameter(pstmt, entity.GetPrimaryKey().getType(), object, 1, entity.GetPrimaryKey().getName());
+        int rows = pstmt.executeUpdate();        
     }    	
 
     // this save method, accepts an object. Have to store that object as a row inside the DB
