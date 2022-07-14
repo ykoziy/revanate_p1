@@ -7,15 +7,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import com.revanate.entity.EntityModel;
+
 public class Query {
 	
 	Connection conn;
+	EntityModel<?> entity;
 	
 	public Query(Connection conn) {
 		this.conn = conn;
+		EntityModel<?> entity;
 	}
 	
 	private void setParameter(PreparedStatement pstmt, Field field, Object object, int index) {
+		EntityModel<?> entity
+		this.entity = entity;
         String type = field.getType().toString();
 
         try {
@@ -27,17 +33,17 @@ public class Query {
             } else if (type.contains("String")) {
                 pstmt.setString(index, (String) value);
             }  else if (type.equals("byte")) {
-                pstmt.setString(index, (String) value);
+                pstmt.setByte(index, (byte) value);
             } else if (type.equals("short")) {
-                pstmt.setString(index, (String) value);
+                pstmt.setShort(index, (short) value);
             } else if (type.equals("float")) {
-                pstmt.setString(index, (String) value);
-            } else if (type.equals("char")) {
-                pstmt.setString(index, (String) value);
+                pstmt.setFloat(index, (float) value);
+            //} else if (type.equals("char")) {
+                //pstmt.setString(index, (String) value);
             } else if (type.equals("long")) {
-                pstmt.setString(index, (String) value);
+                pstmt.setLong(index, (long) value);
             }  else if (type.equals("boolean")) {
-                pstmt.setString(index, (String) value);
+                pstmt.setBoolean(index, (boolean) value);
             }
             
             } catch (IllegalAccessException e) {
@@ -48,7 +54,7 @@ public class Query {
     }
 
      // delete
-    public void delete(Object object) {
+    public void delete(Object object) throws SQLException {
     	Class<?> clazz = object.getClass();
     	Field[] fields = clazz.getDeclaredFields();
         StringBuilder sb = new StringBuilder();
@@ -72,7 +78,7 @@ public class Query {
     }    	
 
     // this save method, accepts an object. Have to store that object as a row inside the DB
-    public Object save(Object object) {
+    public Object save(Object object) throws SQLException {
         // get the runtime class of the object
         Class<?> clazz = object.getClass();
 
@@ -132,7 +138,7 @@ public class Query {
     }
     
     // get
-    public Object get(Object object) {
+    public Object get(Object object) throws SQLException {
     	Class<?> clazz = object.getClass();
     	Field[] fields = clazz.getDeclaredFields();
         StringBuilder sb = new StringBuilder();
@@ -156,6 +162,7 @@ public class Query {
     }
     
     private void resultSetToObject(ResultSet rs, Object object) {
+
         Class<?> clazz = object.getClass();
         for (Field field : clazz.getDeclaredFields()) {
             // field might be private, set accessible to true
@@ -164,26 +171,25 @@ public class Query {
             try  {
                 value = rs.getObject(field.getName());
                 Class<?> type = field.getType();
+            	String fieldType = type.getName();
                 // figure out what type, need to get data type wrapper class
                 // for example int, needs to be Integer.class
                 /// String, needs to be String.class
-                if (type.equals("int")) {
+                if (fieldType.equals("int")) {
                 	type = Integer.class;
-                } else if (type.equals("double")) {
-                    type = Double.class;
-                } else if (type.equals("String")) {
+                } else if (fieldType.equals("double")) {
+                	type = Double.class;
+                } else if (fieldType.contains("String")) {
                 	type = String.class;
-                }  else if (type.equals("byte")) {
+                }  else if (fieldType.equals("byte")) {
                 	type = Byte.class;
-                } else if (type.equals("short")) {
+                } else if (fieldType.equals("short")) {
                 	type = Short.class;
-                } else if (type.equals("float")) {
+                } else if (fieldType.equals("float")) {
                 	type = Float.class;
-                } else if (type.equals("char")) {
-                	type = Character.class;
-                } else if (type.equals("long")) {
+                } else if (fieldType.equals("long")) {
                 	type = Long.class;
-                }  else if (type.equals("boolean")) {
+                }  else if (fieldType.equals("boolean")) {
                 	type = Boolean.class;
                 }
 
