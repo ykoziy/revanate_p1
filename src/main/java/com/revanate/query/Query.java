@@ -91,7 +91,7 @@ public class Query {
 		}
 	}
 
-	private <T> void setParameter(PreparedStatement pstmt, T value, int index) {
+	private void setParameter(PreparedStatement pstmt, Object value, int index) {
 		String fieldName = value.getClass().getTypeName();
 		try {
 			if (fieldName.equals("java.lang.Integer")) {
