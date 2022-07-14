@@ -26,8 +26,8 @@ In order for the Revanate ORM to know which Java classes need to be mapped with 
   #### Annotations List
  - ```@Entity(tableName = "table_name")``` - defines a Java class as entity to be mapped.
  - ```@Column(columnName = "column_name")``` - defines a field inside a class as a column, will be mapped to the DB table.
- - ```@ForeignKey(columnName = "column_name")```
- - ```@Id(columnName = "column_name", autoIndex = "auto")```
+ - ```@ForeignKey(columnName = "column_name")``` - defines foreign key column, sets foreign key column name
+ - ```@Id(columnName = "column_name", autoIndex = "auto")``` - defines primary key column, autoIndex set to `auto` will auto incerement primary key
 
 ### Setting up a session
 In order to build a session you must configure ORM, build a SessionManager and open a session.
@@ -60,3 +60,13 @@ Using SessionManager you can how open a session. Opening a session establishes a
 ### Begin transaction
 
 ## User API
+
+### Session 
+`List<EntityModel<Class<?>>> getEntityList()` - gets EntityModel list.
+`void delete(Object object)` - delete object from the table row.
+`Object save(Object object)` - store object in database table, returns primary key.
+`void update(Object object)` - update object in database table.
+`<T> Object get(Class<?> entityClass, T id)` - get object from the database, by using primary key id
+`Query getAll(Class<?> resultType)` - get all objects from the database. Returns Query.
+`Transaction beginTransaction()` - begins transaction, returns Transaction.
+`void close()` - close the session. Releases connection and returns in to connection pool, clean up other resources.
