@@ -27,7 +27,7 @@ public class Session {
 	}
 	
     private void createTables() {
-        Table t = new Table(conn);
+        Table t = new Table(conn, entityModelList);
         for (EntityModel<?> entity : entityModelList) {
             t.createTable(entity);
         }

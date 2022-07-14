@@ -3,6 +3,7 @@ package com.revanate.query;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import com.revanate.entity.ColumnField;
 import com.revanate.entity.EntityModel;
@@ -11,36 +12,67 @@ import com.revanate.entity.PrimaryKeyField;
 
 public class Table {
     private Connection conn;
+    private List<EntityModel<Class<?>>> entityModelList;
     
-    public Table(Connection conn) {
+    public Table(Connection conn, List<EntityModel<Class<?>>> entityModelList) {
+    	this.entityModelList = entityModelList;
         this.conn = conn;
     }
     
     public void createTable(EntityModel<?> entity) {
         StringBuilder sb = new StringBuilder();
         PrimaryKeyField pk = entity.GetPrimaryKey();
+        List<ForeignKeyField> foreignKeys = entity.GetForiegnKeys();
         sb.append("CREATE TABLE IF NOT EXISTS " + entity.getSimpleClassName().toLowerCase());
         sb.append(" (");
         for (ColumnField column : entity.GetColumns()) {
-        	if (pk.getColumnName().equals(column.getColumnName())) {
-        		if (pk.getGenerationType().equals("auto")) {
+            if (pk.getColumnName().equals(column.getColumnName())) {
+                if (pk.getGenerationType().equals("auto")) {
                     sb.append(column.getColumnName() + " SERIAL NOT NULL");
-        		} else {
-        			sb.append(mapJavaFieldToSQL(column.getColumnName(), column.getType().toString()));
-        		}
+                } else {
+                    sb.append(mapJavaFieldToSQL(column.getColumnName(), column.getType().toString()));
+                }
 
-        	} else {
+            } else {
                 sb.append(mapJavaFieldToSQL(column.getColumnName(), column.getType().toString()));
-        	}
+            }
             sb.append(", ");
         }
-        
+
+        if (foreignKeys != null) {
+            for (ForeignKeyField fk : foreignKeys) {
+                for (EntityModel<?> model : entityModelList) {
+                    if (fk.getType().getName().equals(model.getClassName())) {
+                        Class<?> type = model.GetPrimaryKey().getType();
+                        sb.append(mapJavaFieldToSQL(fk.getColumnName(), type.toString()));
+                         sb.append(", ");
+                    }
+                }
+
+            }
+        }
+
         sb.replace(sb.length() - 2, sb.length(), "");
         if (pk != null) {
             sb.append(", PRIMARY KEY(" + pk.getColumnName() + ")");
         }
+
+        if (foreignKeys != null) {
+            for (ForeignKeyField fk : foreignKeys) {
+                for (EntityModel<?> model : entityModelList) {
+                    if (fk.getType().getName().equals(model.getClassName())) {
+                        String pkName = model.GetPrimaryKey().getColumnName();
+                        sb.append(", CONSTRAINT " + fk.getColumnName());
+                        sb.append(" FOREIGN KEY(" + fk.getColumnName() + ")");
+                        sb.append(" REFERENCES " + model.getSimpleClassName().toLowerCase());
+                        sb.append("(" + pkName + ")");
+                    }
+                }
+
+            }
+        }
         sb.append(");");
-        
+
         Statement stmt;
         try {
             stmt = conn.createStatement();
