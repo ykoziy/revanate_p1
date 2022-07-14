@@ -23,7 +23,6 @@ public class SessionCache {
     }
     
     public Object get(String key) {
-        System.out.println("got from cache " + key);
         return cache.get(key);
     }
     
