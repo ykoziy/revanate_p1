@@ -10,9 +10,9 @@ public class TestEntityModel
 	int primaryKey;
 	
 	@Column(columnName = "")
-	@ForeignKey(References = "")
+	@ForeignKey(columnName = "")
 	int fKey1;
-	@ForeignKey(References = "")
+	@ForeignKey(columnName = "")
 	int fKey2;
 	
 	@Column(columnName = "")
