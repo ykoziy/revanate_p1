@@ -63,10 +63,17 @@ Using SessionManager you can how open a session. Opening a session establishes a
 
 ### Session 
 `List<EntityModel<Class<?>>> getEntityList()` - gets EntityModel list.
+
 `void delete(Object object)` - delete object from the table row.
+
 `Object save(Object object)` - store object in database table, returns primary key.
+
 `void update(Object object)` - update object in database table.
+
 `<T> Object get(Class<?> entityClass, T id)` - get object from the database, by using primary key id
+
 `Query getAll(Class<?> resultType)` - get all objects from the database. Returns Query.
+
 `Transaction beginTransaction()` - begins transaction, returns Transaction.
+
 `void close()` - close the session. Releases connection and returns in to connection pool, clean up other resources.
