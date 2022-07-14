@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import com.revanate.entity.ColumnField;
 import com.revanate.entity.EntityModel;
+import com.revanate.entity.PrimaryKeyField;
 
 public class Query {
 	
@@ -151,7 +152,6 @@ public class Query {
                 // field.getColumnName() <- gets column name as represented in DB
                 setParameter(pstmt, field.getType(), object, idx, field.getName());
             }
-            System.out.println(pstmt.toString());
             int rows = pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
