@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 
 import com.revanate.entity.ColumnField;
 import com.revanate.entity.EntityModel;
@@ -17,12 +18,45 @@ public class Query {
 	
 	Connection conn;
 	EntityModel<?> entity;
+	Object[] objectArray;
 	
 	public Query(Connection conn, EntityModel<?> entity) {
 		this.conn = conn;
 		this.entity = entity;
 	}
 	
+    public List<?> list() {
+        //System.out.println(Arrays.toString(objectArray));
+        List<?> list = Arrays.asList(objectArray);
+        return list;
+    }
+    
+    public Query getAll(Class<?> resultType) throws SQLException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT * FROM ");
+        sb.append(resultType.getSimpleName().toLowerCase());
+        sb.append(";");
+        PreparedStatement pstmt = conn.prepareStatement(sb.toString(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        ResultSet rs = pstmt.executeQuery();
+        int rowCount = rs.last() ? rs.getRow() : 0;
+        int index = 0;
+        rs.beforeFirst();
+        objectArray = new Object[rowCount];
+        while (rs.next()) {
+            try {
+                Constructor<?> constructor = resultType.getConstructor();
+                Object resultObj = constructor.newInstance();
+                resultSetToObject(rs, resultObj);
+                objectArray[index] = resultObj;
+                index++;
+            } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+    
+        }
+        return this;
+    }
+    
     private void setParameter(PreparedStatement pstmt, Class<?> entityClass, Object object, int index, String fieldName) {
         String type = entityClass.getTypeName();
         Field field;

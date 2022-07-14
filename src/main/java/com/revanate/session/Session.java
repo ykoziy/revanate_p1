@@ -74,7 +74,21 @@ public class Session {
             }
         }
     }
-	
+    
+    public Query getAll(Class<?> resultType) {
+        for (EntityModel<?> entity : entityModelList) {
+            if (entity.getClassName().equals(resultType.getName())) {
+                Query query = new Query(conn, entity);
+                try {
+                    return query.getAll(resultType);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+    
 	public Transaction beginTransaction() {
 		if (currenTransaction == null) {
 			currenTransaction = new Transaction(conn);
