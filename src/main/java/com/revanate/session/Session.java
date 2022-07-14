@@ -37,50 +37,43 @@ public class Session {
 	public List<EntityModel<Class<?>>> getEntityList() {
 		return entityModelList;
 	}
-	public Object get(Class<?> entityClass, int id) {
-		// ID can be any type, figure out  best way to do it
-		String tableName = entityClass.getName();
-		/* 
-		 * 1) Get the table name (Entity annotation is empty string, use class name as table name as lower case), or specified in Entity annotation tableName
-		 * 2) Get the name of primary key field(s)
-		 * 3) Create query based on that data
-		 * 4) Build an Object based on the result of query?
-		 * 5) If everything went OK, just store the Object inside the cache
-		 * 6) Return primary key (ID), it is set to Object because it can be any type
-		 */	
-		return null;
-	}
+	
+    public Object get(Class<?> entityClass, int id) {
+        for (EntityModel<?> entity : entityModelList) {
+            if (entity.getClassName().equals(entityClass.getCanonicalName())) {
+            	Query query = new Query(conn, entity);
+                try {
+                    return query.get(entityClass, id);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
 	
 	public Object save(Object object) {
-		Query2 query;
-		//Class clazz = object.getClass();
 		EntityModel<?> entity = EntityModel.of(getClass());
 		int index = entityModelList.indexOf(entity);
 		if (index != -1) {
-			query = new Query2(conn, entityModelList.get(index));
+			Query query = new Query(conn, entityModelList.get(index));
 			query.save(object);
 		}
-		/* 
-		 * 1) Convert object to EntityModel
-		 * 2) Get field names and field data
-		 * 3) Create query using data from previous data
-		 * 4) Run that query on the DB, using session connection
-		 * 5) If everything went OK, just store the Object inside the cache
-		 * 6) Return primary key (ID), it is set to Object because it can be any type
-		 */
 		return null;
 	}
 	
-	public void delete(Object object) {
-		/* 
-		 * 1) Convert object to EntityModel
-		 * 2) Get fprimaryKey ID
-		 * 3) Create query using data from previous data
-		 * 4) Run that query on the DB, using session connection
-		 * 5) If everything went OK, just store the Object inside the cache
-		 * 6) Return primary key (ID), it is set to Object because it can be any type
-		 */	
-	}
+    public void delete(Object object) {
+        for (EntityModel<?> entity : entityModelList) {
+            if (entity.getClassName().equals(object.getClass().getCanonicalName())) {
+                Query query = new Query(conn, entity);
+                try {
+                    query.delete(object);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 	
 	public Transaction beginTransaction() {
 		if (currenTransaction == null) {
