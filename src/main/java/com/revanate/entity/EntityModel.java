@@ -12,21 +12,20 @@ import com.revanate.annotations.Id;
 import com.revanate.exception.EntityException;
 import com.revanate.exception.PrimaryKeyMissing;
 
-public class EntityModel<T>
-{
+public class EntityModel<T> {
 	private Class<?> annotetedClass;
+	private String entityName;
 	private Field[] fields;
 	@SuppressWarnings("unused")
 	private int numColumns = 0, numForeignKeys = 0;
 	private boolean primaryKey = false;
 
-	public EntityModel(Class<?> annotetedClass)
-	{
+	public EntityModel(Class<?> annotetedClass) {
 		this.annotetedClass = annotetedClass;
 		isAnnotated();
 
 	}
-	
+
 	// method to check and transpose a normal java class to a MetalModel
 	public static EntityModel<Class<?>> of(Class<?> clazz) {
 		if (clazz.getAnnotation(Entity.class) == null) {
@@ -35,37 +34,29 @@ public class EntityModel<T>
 		return new EntityModel<>(clazz);
 	}
 
-	private void isAnnotated()
-	{
-		if (annotetedClass.isAnnotationPresent(Entity.class))
-		{
+	private void isAnnotated() {
+		if (annotetedClass.isAnnotationPresent(Entity.class)) {
+			entityName = annotetedClass.getAnnotation(Entity.class).tableName();
 			fields = annotetedClass.getDeclaredFields();
 
-			for (Field field : fields)
-			{
+			for (Field field : fields) {
 				Annotation[] annotations = field.getAnnotations();
-				for (Annotation ann : annotations)
-				{
-					if (ann.annotationType() == Column.class)
-					{
+				for (Annotation ann : annotations) {
+					if (ann.annotationType() == Column.class) {
 						numColumns++;
 						break;
 					}
 
-					else if (ann.annotationType() == ForeignKey.class)
-					{
+					else if (ann.annotationType() == ForeignKey.class) {
 						numForeignKeys++;
 						numColumns++;
 						break;
-					} else if (ann.annotationType() == Id.class)
-					{
-						if (!primaryKey)
-						{
+					} else if (ann.annotationType() == Id.class) {
+						if (!primaryKey) {
 							primaryKey = true;
 							// numColumns++;
 							break;
-						} else
-						{
+						} else {
 							throw new EntityException(
 									"The id annotation is used for primary keys, and you can not have multiple primary keys");
 						}
@@ -73,27 +64,21 @@ public class EntityModel<T>
 				}
 			}
 
-		} else
-		{
+		} else {
 			throw new EntityException("The class was not properly annotated");
 		}
 	}
 
-	public PrimaryKeyField GetPrimaryKey() throws IllegalArgumentException
-	{
+	public PrimaryKeyField GetPrimaryKey() throws IllegalArgumentException {
 
-		if (!primaryKey)
-		{
+		if (!primaryKey) {
 			throw new PrimaryKeyMissing("The object does not have a primary key field");
 		}
 
-		for (Field field : fields)
-		{
+		for (Field field : fields) {
 			Annotation[] annotations = field.getAnnotations();
-			for (Annotation ann : annotations)
-			{
-				if (ann.annotationType() == Id.class)
-				{
+			for (Annotation ann : annotations) {
+				if (ann.annotationType() == Id.class) {
 					field.setAccessible(true);
 					return new PrimaryKeyField(field);
 
@@ -104,17 +89,13 @@ public class EntityModel<T>
 		throw new PrimaryKeyMissing("Primary key not found");
 	}
 
-	public List<ForeignKeyField> GetForiegnKeys() throws IllegalArgumentException
-	{
+	public List<ForeignKeyField> GetForiegnKeys() throws IllegalArgumentException {
 		List<ForeignKeyField> temp = new ArrayList<>();
 
-		for (Field field : fields)
-		{
+		for (Field field : fields) {
 			Annotation[] annotations = field.getAnnotations();
-			for (Annotation ann : annotations)
-			{
-				if (ann.annotationType() == ForeignKey.class)
-				{
+			for (Annotation ann : annotations) {
+				if (ann.annotationType() == ForeignKey.class) {
 					field.setAccessible(true);
 					temp.add(new ForeignKeyField(field));
 
@@ -125,17 +106,13 @@ public class EntityModel<T>
 		return temp;
 	}
 
-	public List<ColumnField> GetColumns() throws IllegalArgumentException
-	{
+	public List<ColumnField> GetColumns() throws IllegalArgumentException {
 		List<ColumnField> temp = new ArrayList<>();
 
-		for (Field field : fields)
-		{
+		for (Field field : fields) {
 			Annotation[] annotations = field.getAnnotations();
-			for (Annotation ann : annotations)
-			{
-				if (ann.annotationType() == Column.class)
-				{
+			for (Annotation ann : annotations) {
+				if (ann.annotationType() == Column.class) {
 					field.setAccessible(true);
 					temp.add(new ColumnField(field));
 				}
@@ -144,13 +121,17 @@ public class EntityModel<T>
 
 		return temp;
 	}
-	
+
 	public String getSimpleClassName() {
 		return annotetedClass.getSimpleName();
 	}
 
 	public String getClassName() {
 		return annotetedClass.getName();
+	}
+
+	public String getEntityname() {
+		return entityName;
 	}
 
 }
