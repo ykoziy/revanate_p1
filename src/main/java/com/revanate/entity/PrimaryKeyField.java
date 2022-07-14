@@ -10,7 +10,8 @@ public class PrimaryKeyField {
 	public PrimaryKeyField(Field field) {
 		// lets check the field to ensure it has the column annotation that we're
 		// expecting
-		if (field.getAnnotation(Id.class) == null) {
+		Id pk = field.getAnnotation(Id.class);
+		if (pk == null) {
 			// cant get a name of null!!!
 			throw new IllegalStateException("Cannot create PrimaryKeyField object! Provided field: " + field.getName() + " is not annotated with @Id");
 		}
@@ -34,5 +35,9 @@ public class PrimaryKeyField {
 
 	public String getColumnName() {
 		return field.getAnnotation(Id.class).columnName();
+	}
+	
+	public String getGenerationType() {
+		return field.getAnnotation(Id.class).autoIndex();
 	}
 }
