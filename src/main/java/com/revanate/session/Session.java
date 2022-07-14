@@ -37,10 +37,10 @@ public class Session {
 		return entityModelList;
 	}
 	
-    public Object get(Class<?> entityClass, int id) {
+    public <T> Object get(Class<?> entityClass, T id) {
         for (EntityModel<?> entity : entityModelList) {
             if (entity.getClassName().equals(entityClass.getCanonicalName())) {
-            	Query query = new Query(conn, entity);
+                Query query = new Query(conn, entity);
                 try {
                     return query.get(entityClass, id);
                 } catch (SQLException e) {
@@ -50,13 +50,14 @@ public class Session {
         }
         return null;
     }
+
 	
     public Object save(Object object) {
         Class<?> clazz = object.getClass();
         for (EntityModel<?> entity : entityModelList) {
             if (entity.getClassName().equals(clazz.getCanonicalName())) {
             	Query query = new Query(conn, entity);
-                query.save(object);
+                return query.save(object);
             }
         }
         return null;
