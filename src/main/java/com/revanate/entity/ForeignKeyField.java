@@ -35,6 +35,6 @@ public class ForeignKeyField
 	}
 
 	public String getColumnName() {
-		return field.getAnnotation(ForeignKey.class).References();
+		return field.getAnnotation(ForeignKey.class).columnName();
 	}	
 }
