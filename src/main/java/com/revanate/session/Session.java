@@ -51,15 +51,16 @@ public class Session {
         return null;
     }
 	
-	public Object save(Object object) {
-		EntityModel<?> entity = EntityModel.of(getClass());
-		int index = entityModelList.indexOf(entity);
-		if (index != -1) {
-			Query query = new Query(conn, entityModelList.get(index));
-			query.save(object);
-		}
-		return null;
-	}
+    public Object save(Object object) {
+        Class<?> clazz = object.getClass();
+        for (EntityModel<?> entity : entityModelList) {
+            if (entity.getClassName().equals(clazz.getCanonicalName())) {
+            	Query query = new Query(conn, entity);
+                query.save(object);
+            }
+        }
+        return null;
+    }
 	
     public void delete(Object object) {
         for (EntityModel<?> entity : entityModelList) {
