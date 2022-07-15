@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.revanate.entity.ColumnField;
@@ -17,22 +17,26 @@ import com.revanate.entity.PrimaryKeyField;
 
 public class Query {
 
-	Connection conn;
-	EntityModel<?> entity;
-	Object[] objectArray;
+	private Connection conn;
+	private EntityModel<?> entity;
+	private Object[] objectArray;
+	private Class<?> resultClass;
 
 	public Query(Connection conn, EntityModel<?> entity) {
 		this.conn = conn;
 		this.entity = entity;
 	}
 
-	public List<?> list() {
-		// System.out.println(Arrays.toString(objectArray));
-		List<?> list = Arrays.asList(objectArray);
+	public <T> List<T> list() {
+		List<T> list = new LinkedList<>();
+		for (int i = 0; i < objectArray.length; i++) {
+			list.add((T) resultClass.cast(objectArray[i]));
+		}
 		return list;
 	}
 
 	public Query getAll(Class<?> resultType) throws SQLException {
+		resultClass = resultType;
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT * FROM ");
 		sb.append(resultType.getSimpleName().toLowerCase());
@@ -161,7 +165,6 @@ public class Query {
 		}
 
 		sb.append(" WHERE " + entity.GetPrimaryKey().getColumnName() + "=?;");
-		System.out.println(sb.toString());
 
 		try {
 			PreparedStatement pstmt = conn.prepareStatement(sb.toString(), Statement.RETURN_GENERATED_KEYS);
@@ -237,7 +240,6 @@ public class Query {
 				return rs.getObject(1);
 
 			}
-			System.out.println("argh");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
