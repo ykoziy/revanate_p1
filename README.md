@@ -13,13 +13,12 @@ Revanate, a Java based ORM library simplifying connection to the PostgreSQL with
 
 ## Features
 
-List of features goes here....
+- Connection pooling
+- Transaction managment
+- CRUD operations
+- Tables are created with correct foreign keys
 
 ## Getting Started
-
-Any Information one would need to utilize your repo
-
-## Usage
 
 Using git:
 
