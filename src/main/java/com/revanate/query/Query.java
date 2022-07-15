@@ -98,7 +98,7 @@ public class Query {
 				pstmt.setInt(index, (int) value);
 			} else if (fieldName.equals("java.lang.Double")) {
 				pstmt.setDouble(index, (double) value);
-			} else if (fieldName.equals("java.lang.Double")) {
+			} else if (fieldName.equals("java.lang.String")) {
 				pstmt.setString(index, (String) value);
 			} else if (fieldName.equals("java.lang.Byte")) {
 				pstmt.setByte(index, (byte) value);
@@ -106,7 +106,7 @@ public class Query {
 				pstmt.setShort(index, (short) value);
 			} else if (fieldName.equals("java.lang.Float")) {
 				pstmt.setFloat(index, (float) value);
-			} else if (fieldName.equals("java.lang.Float")) {
+			} else if (fieldName.equals("java.lang.Long")) {
 				pstmt.setLong(index, (long) value);
 			} else if (fieldName.equals("java.lang.Boolean")) {
 				pstmt.setBoolean(index, (boolean) value);
