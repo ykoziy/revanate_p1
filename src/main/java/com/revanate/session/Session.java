@@ -25,7 +25,7 @@ public class Session {
     public Session(Connection conn, List<EntityModel<Class<?>>> entityModelList) {
         this.entityModelList = entityModelList;
         this.conn = conn;
-        cache = new SessionCache();
+       // cache = new SessionCache();
         createTables();
     }
 
@@ -46,11 +46,11 @@ public class Session {
                 Query query = new Query(conn, entity);
                 try {
                     Object resultObject = query.get(entityClass, id);
-                    if (cache.contains(id.toString())) {
-                        return cache.get(id.toString());
-                    } else {
-                        cache.add(id.toString(), resultObject);
-                    }
+                  //  if (cache.contains(id.toString())) {
+                   //     return cache.get(id.toString());
+                  //  } else {
+                  //      cache.add(id.toString(), resultObject);
+                   // }
                     return resultObject;
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -76,9 +76,9 @@ public class Session {
             if (entity.getClassName().equals(clazz.getCanonicalName())) {
                 Query query = new Query(conn, entity);
                 Object resultObject = query.save(object);
-                if (resultObject != null) {
-                    cache.add(resultObject.toString(), object);
-                }
+             //   if (resultObject != null) {
+              //      cache.add(resultObject.toString(), object);
+               // }
 
                 return resultObject;
             }
