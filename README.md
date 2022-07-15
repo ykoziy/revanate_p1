@@ -1,5 +1,8 @@
 # Revanate
 
+<p align="center">
+![logo](https://raw.githubusercontent.com/ykoziy/revanate_p1/main/logo.png)
+</p>
 ## Project Description
 
 Revanate, a Java based ORM library simplifying connection to the PostgreSQL without the need for SQL or connection managment.
